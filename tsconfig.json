@@ -18,7 +18,8 @@
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@wiz": ["./src/libs/wiz/index.ts"],
     },
     "plugins": [{ "name": "next" }]
   },
