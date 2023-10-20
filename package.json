@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "dev": "concurrently \"docker-compose up\" \"next dev\"",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start"
@@ -20,6 +20,7 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
+    "concurrently": "^8.2.2",
     "next": "^13.5.4",
     "next-auth": "^4.23.0",
     "react": "18.2.0",
