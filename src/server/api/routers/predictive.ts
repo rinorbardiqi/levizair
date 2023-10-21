@@ -10,24 +10,29 @@ const client = new language.LanguageServiceClient({
   auth,
 });
 
-async function analyzeText(text: string) {
+async function predictAiLocation(aiQuery: string) {
   const request = {
     document: {
-      content: text,
+      content: aiQuery,
       type: "PLAIN_TEXT" as const,
     },
     features: {
       extractEntities: {
         types: ["LOCATION"],
       },
-      analyzeText: text,
+      analyzeText: aiQuery,
     },
   };
 
   try {
     return client.analyzeEntities(request).then((data) => {
       const entities = data[0].entities;
-      return entities?.filter((items) => items.type === "LOCATION");
+      const dataSet =
+        entities?.filter((items) => items.type === "LOCATION") ?? [];
+
+      return dataSet.reduce((prev, current) => {
+        return prev?.salience ?? 0 > Number(current?.salience) ? prev : current;
+      });
     });
   } catch (error) {
     console.error("Error occurred:", error);
@@ -37,15 +42,49 @@ async function analyzeText(text: string) {
 
 export const googleAiRouter = createTRPCRouter({
   predict: publicProcedure.query(async ({ ctx }) => {
-    const textToAnalyze =
-      "A user has travelled twice to London and once to Paris";
+    const userId = ctx.session?.user.id;
 
-    const response = await analyzeText(textToAnalyze);
+    const bookings = await ctx.db.booking.findMany({
+      where: {
+        userUserId: { equals: userId },
+      },
+      include: {
+        tickets: {
+          include: {
+            bookedSegments: {
+              include: {
+                flight: {
+                  include: {
+                    destination: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
 
-    console.log("response", response);
+    const location = bookings
+      .flatMap((booking) => {
+        return booking.tickets.map((ticket) => {
+          return ticket.bookedSegments.map((segment) => {
+            return segment.flight.destination.country;
+          });
+        });
+      })
+      .flat()
+      .join(", ");
+
+    const aiPredictedLocation = await predictAiLocation(location);
+
+    const predicted = {
+      location: aiPredictedLocation.name,
+      score: (Number(aiPredictedLocation?.salience) * 100).toFixed(2),
+    };
 
     return {
-      predicted: `Hello`, // Update the response based on the actual data received from the AI platform
+      predicted,
     };
   }),
 });
