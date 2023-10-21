@@ -30,6 +30,10 @@ export const userRouter = createTRPCRouter({
           name: input.name,
           password: hashedPassword,
           dateOfBirth: input.dob,
+          tags: "sports,anime",
+          salutation: "MRS",
+          gender: "M",
+          passengerType: "ADULT",
         },
       });
     }),

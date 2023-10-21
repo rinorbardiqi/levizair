@@ -14,17 +14,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id          Int      @id @default(autoincrement())
-    name        String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    createdBy   User     @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -77,7 +66,6 @@ model User {
     accounts            Account[]
     sessions            Session[]
     Booking             Booking[]
-    posts               Post[]
     address             Address?        @relation(fields: [addressId], references: [id])
     LoyaltyPoints       LoyaltyPoints[]
     ReferdBooking       Booking[]       @relation("Refered")
@@ -101,15 +89,14 @@ model Booking {
     id         Int      @id @default(autoincrement())
     tickets    Ticket[]
     user       User     @relation(fields: [userUserId], references: [id])
-    refered    User     @relation("Refered", fields: [referedBy], references: [id])
-    referedBy  String
+    refered    User?    @relation("Refered", fields: [referedBy], references: [id])
+    referedBy  String?
     userUserId String
 }
 
 // Define the Ticket model
 model Ticket {
     id               Int             @id @default(autoincrement())
-    ticketNumber     Int
     ticketingAirline Airline         @relation(fields: [arlineId], references: [id])
     ticketStatus     TicketStatus
     issuedDate       DateTime
@@ -150,7 +137,7 @@ model BookedSegment {
     destination   Location     @relation(fields: [destinationId], references: [id])
     flight        Flights      @relation(fields: [flightId], references: [id])
     flightDate    DateTime
-    airlineCode   Airline      @relation(fields: [airlineId], references: [id])
+    airlineCode   Airline?     @relation(fields: [airlineId], references: [id])
     departureDate DateTime
     arrivalDate   DateTime
     bookingClass  BookingClass
@@ -160,7 +147,7 @@ model BookedSegment {
     Ticket        Ticket       @relation(fields: [ticketId], references: [id])
     destinationId Int
     flightId      Int
-    airlineId     Int
+    airlineId     Int?
 }
 
 enum BookingClass {
@@ -182,24 +169,24 @@ model Airline {
 }
 
 model Flights {
-    id              Int             @id @default(autoincrement())
-    destinacion     Location        @relation(fields: [destinacionId], references: [id])
-    destinaction    Location        @relation("Start Location", fields: [startLocationId], references: [id])
-    destinacionId   Int
-    flightDate      DateTime
-    Airline         Airline         @relation(fields: [airlineId], references: [id])
-    airlineId       Int
-    BookedSegment   BookedSegment[]
-    startLocationId Int
+    id                 Int             @id @default(autoincrement())
+    destination        Location        @relation(fields: [destinationId], references: [id])
+    startDestination   Location        @relation("Start Location", fields: [startDestinationId], references: [id])
+    destinationId      Int
+    flightDate         DateTime
+    Airline            Airline         @relation(fields: [airlineId], references: [id])
+    airlineId          Int
+    BookedSegment      BookedSegment[]
+    startDestinationId Int
 }
 
 model Location {
     id            Int             @id @unique @default(autoincrement())
     name          String
-    iataCode      String          @unique
+    iataCode      String
     latitude      Float?
     longitude     Float?
-    country       String          @unique
+    country       String
     City          String
     BookedSegment BookedSegment[]
     Flights       Flights[]
@@ -219,7 +206,7 @@ model Events {
     id          Int      @id @default(autoincrement())
     name        String
     description String
-    Location    Location @relation(fields: [country], references: [country])
-    country     String
+    Location    Location @relation(fields: [locationId], references: [id])
+    locationId  Int
     tags        String
 }
