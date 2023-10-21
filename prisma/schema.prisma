@@ -199,7 +199,9 @@ model LoyaltyPoints {
     user      User    @relation(fields: [userId], references: [id])
     userId    String
     airline   Airline @relation(fields: [airlineId], references: [id])
-    airlineId Int
+    airlineId Int     @unique
+    value     Int
+    level     Int
 }
 
 model Events {

@@ -379,7 +379,6 @@ async function main() {
   const tickets = [
     {
       id: 1,
-
       ticketStatus: "ACTIVE",
       issuedDate: "2023-11-01T15:00:00Z",
       bookingId: 1,
@@ -572,6 +571,27 @@ async function main() {
     },
   ];
 
+  const loyaltyPoints = [
+    {
+      userId: "2d3d",
+      airlineId: 1,
+      value: 90,
+      level: 0,
+    },
+    {
+      userId: "2d3d",
+      airlineId: 3,
+      value: 130,
+      level: 1,
+    },
+    {
+      userId: "2d3d",
+      airlineId: 5,
+      value: 220,
+      level: 2,
+    },
+  ];
+
   Array.from({ length: 10 }).map(async (_, id) => {
     const data = {
       id: faker.string.uuid(),
@@ -661,6 +681,14 @@ async function main() {
           "PREMIUM_ECONOMY",
           "FIRST",
         ]),
+      },
+    });
+  }
+
+  for await (const item of loyaltyPoints) {
+    await prisma.loyaltyPoints.create({
+      data: {
+        ...item,
       },
     });
   }
