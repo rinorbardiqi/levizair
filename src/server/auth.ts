@@ -2,13 +2,13 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
-  type DefaultSession,
   type NextAuthOptions,
+  type DefaultSession,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
-
-import { env } from "~/env.mjs";
-import { db } from "~/server/db";
+import { db } from "./db";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
+import { env } from "process";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -20,7 +20,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: DefaultSession["user"] & {
       id: string;
-      // ...other properties
+      // ...JWT properties added by `jwt` & `session` callbacks
       // role: UserRole;
     };
   }
@@ -36,32 +36,74 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+
+const validateEmail = (email = "") => {
+  return new RegExp(
+    "^(?=.{1,254}$)([a-zA-Z0-9_.-]+)@([a-zA-Z0-9-]+.[a-zA-Z]{2,})$",
+  ).test(email);
+};
+
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+        token.image = user.image;
+      }
+
+      return token;
+    },
+    session: ({ session, token }) => ({
       ...session,
       user: {
         ...session.user,
-        id: user.id,
+        id: token.id,
       },
     }),
   },
   adapter: PrismaAdapter(db),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (
+          !credentials?.email ||
+          !credentials?.password ||
+          !validateEmail(credentials?.email)
+        )
+          throw new Error("Invalid credentials");
+
+        const user = await db.user.findFirst({
+          where: {
+            email: credentials.email,
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            password: true,
+          },
+        });
+
+        const validPassword =
+          (await bcrypt.compare(credentials.password, user?.password ?? "")) ||
+          credentials.password === user?.password;
+
+        if (!user || !validPassword) throw new Error("Invalid credentials");
+
+        return user;
+      },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
+  session: {
+    strategy: "jwt",
+  },
+  secret: env.JWT_SECRET ?? "",
+  debug: env.NODE_ENV === "development",
 };
 
 /**
@@ -69,9 +111,9 @@ export const authOptions: NextAuthOptions = {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = (ctx: {
+export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
+  return await getServerSession(ctx.req, ctx.res, authOptions);
 };

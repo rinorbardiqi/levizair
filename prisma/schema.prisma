@@ -19,7 +19,7 @@ model Post {
     name        String
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    createdBy   User     @relation(fields: [createdById], references: [userId])
+    createdBy   User     @relation(fields: [createdById], references: [id])
     createdById String
 
     @@index([name])
@@ -39,7 +39,7 @@ model Account {
     scope             String?
     id_token          String? // @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
 }
@@ -49,7 +49,7 @@ model Session {
     sessionToken String   @unique
     userId       String
     expires      DateTime
-    user         User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -61,21 +61,21 @@ model VerificationToken {
 }
 
 model User {
-    userId              String    @id
-    firstName           String
-    lastName            String
+    id                  String    @id @default(cuid())
+    name                String
     email               String    @unique
-    phone               String?
-    addressId           Int
-    address             Address?  @relation(fields: [addressId], references: [id])
-    frequentFlyerNumber String?
-    documentId          Int
-    document            Document  @relation(fields: [documentId], references: [id])
+    password            String
     dateOfBirth         DateTime
+    documentId          Int?
+    addressId           Int?
+    frequentFlyerNumber String?
+    phone               String?
     accounts            Account[]
     sessions            Session[]
-    posts               Post[]
     Booking             Booking[]
+    posts               Post[]
+    document            Document? @relation(fields: [documentId], references: [id])
+    address             Address?  @relation(fields: [addressId], references: [id])
 }
 
 model Address {
@@ -110,7 +110,7 @@ model Booking {
     id                    Int              @id @default(autoincrement())
     bookingReference      BookingReference @relation(fields: [bookingReferenceValue], references: [value])
     tickets               Ticket[]
-    user                  User             @relation(fields: [userUserId], references: [userId])
+    user                  User             @relation(fields: [userUserId], references: [id])
     bookingReferenceValue String
     userUserId            String
 }
