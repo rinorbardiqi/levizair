@@ -1,4 +1,4 @@
-import { postRouter, userRouter } from "./routers/index";
+import { googleAiRouter, postRouter, userRouter } from "./routers/index";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -9,6 +9,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   post: postRouter,
   user: userRouter,
+  googleAi: googleAiRouter,
 });
 
 // export type definition of API

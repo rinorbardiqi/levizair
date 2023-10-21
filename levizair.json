@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "levizair1",
+  "private_key_id": "0c813f46f60e45ef7671bd847142ffac742c9f8e",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2waW8PPiKckNT\nRqtYPx9k+KzGq+0vL4B+YlifAQCEAbtkNH7iOBVh4CnRHaJWkCwpgffPFE2H3ouG\nuuYzjyW/2VJvRya2br64G7Ob2OmBj2ot1SdeBiZDs23MfVCWfxsVYKWC34qJoLmA\n+mPWd1zHijaoiOcCMsI+4E7mE6tUN8WpyvOhaEPNpGWr/dyo38X5xx9qkzIXBqlr\naYuqSkFs9RECxa3gCGyftEQDI2783uHkpojqiR4hzvV296jsi3Mrji3bCkEMwurK\nCS9kceWxbKSCtmDfNBq5JNUhHibltn7WROlhhzhPtfpzORhwHQLjNRJVYFWwEwd7\n24b3i6vrAgMBAAECggEADDbM+NOqWLZiQYKLmQ4+7uSfx3deFrU6BThVa+sJOclT\n2NKZWE0fQLdWlB9C5j4kdXG2OiTFObtp38tF71Q11aiUldNPhwnHvU48psHMeVg4\nZG/GfcYzcHrhb7VAWY6NJNScuy5td91CCJiza3X2wW8/T+w2ZDM4QDOFkmLmJG6o\n1ENcRwDqRpml9LD1kWnXFgCTPgBF8GdiKBPX8Ec8hYHoc8MfXOr6yEzkeJu/H0Yr\np7qMsSNSr4mhyDCen8BAXCzpxUZ2/wxyh8y+dss5STy5TLC/brfXtOIU6iUbyTgL\nNzmXRLWwwtVJDLuoy2Otr9dacKjJeB+AlVCX9TrVYQKBgQDlvmkJ3VZjKZk9qNkK\nlb41mjIfbJt3Nvcl/PfmMoXGDJp8mgNsqKnox6VI3ebQR3wQzjUjOydnnZRa0mdN\n1ocxG63yc1W2IlNHjAhGQNUyWjELiSJWj5t0BbGbyj/q/5LvdvMIwmh1Rgzmpp8N\nnX/L0RJVrUZoL2hWlfTBgtReBwKBgQDLpIh0928VvUweDm3dZEpysPXzN4IjGyHV\nShbvVp4X+OBtRMeu3IWTUPJp38nYRzIEaRNjmWeRaRc5g3WKDl4G42GjUE//QTRl\ngdhVLVUn+Zluz2BdkkTQChTmzFighsM2kyyPINFKmvVMudtqB+P9liqNbiqi3tPL\n+E1UqZ+J/QKBgDFQDJW8d5VzUVwlyOh3ucshnM6X7krJdoUl5kP35jTbcbF7EW8a\nSNYZPEYGs0tTfLLSwB8ezFd2QGi6LshLWttUmKKo1OXyOjPqP8BsnBZhu5NBTSiN\nTI27xyKsZ8nWL8DMpF/l8qvxbEV50DwI6WxjJO9U8P7d5iRnrZB3t4OzAoGBAI1o\nHuk5uAVcgTKNynRlY9zoTKEq9k7yVDgLTom7l+QFibHWhOJDdu2o0+v43ew04+J0\nJGaQ633pf5sMUd4fw+L8mZwR9LrGyF+EHnhnFi6//28WyU+wdeAQYBsz4ob1jTCk\nWdi5bRtlJti0ZkvmVsaMM9gpm6mlGWUVcn1Lm+DxAoGARthyQF0P99bo8Pq/auiP\nlR/8GYuLFwMhraJ9ahpRcKicALrRZB0vmBj491PwsuVrnjrzM4BR5R/6Kix9jzgT\nVIxlhrSGIk3ed6CPxj13KGK677fkF7jUjXQZMMrtNNwJP9KZ6LvOjF4jDCjGraoE\npeho0Y4lnkMhi0UGb1XQodc=\n-----END PRIVATE KEY-----\n",
+  "client_email": "levizairaccount@levizair1.iam.gserviceaccount.com",
+  "client_id": "104046122569964534761",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/levizairaccount%40levizair1.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

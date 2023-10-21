@@ -1,0 +1,344 @@
+openapi: 3.0.0
+info:
+  title: Lufthansa booking service
+  version: '1.0.0'
+  description: The API designed to receive information for the bookings
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local environment root path
+  - url: https://test-lhind-junctionx.dlh.de/api/v1
+    description: Test environment root path
+  - url: https://lhind-junctionx.dlh.de/api/v1
+    description: Production environment root path
+
+tags:
+  - name: booking
+
+paths:
+  /booking:
+    put:
+      summary: Creates or updates a booking
+      tags:
+        - booking
+      operationId: putBooking
+      description: Creates a new booking or updates an existing booking by the given booking reference
+      requestBody:
+        required: true
+        $ref: '#/components/requestBodies/StoreBookingRequest'
+      responses:
+        '200':
+          description: UPDATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/SuccessResponse'
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/SuccessResponse'
+        '400':
+          description: BAD_REQUEST
+          $ref: '#/components/responses/ErrorResponse'
+        '401':
+          description: UNAUTHORIZED
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          description: FORBIDDEN
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          description: NOT_FOUND
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          description: INTERNAL_SERVER_ERROR
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  responses:
+    SuccessResponse:
+      description: Generic success response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+    ErrorResponse:
+      description: Generic error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseResponse'
+
+  requestBodies:
+    StoreBookingRequest:
+      description: Request for storing the booking information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Booking'
+
+  schemas:
+    BaseResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+
+    Booking:
+      type: object
+      required:
+        - bookingReference
+      properties:
+        bookingReference:
+          $ref: '#/components/schemas/BookingReference'
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+        user:
+          $ref: '#/components/schemas/User'
+
+    Ticket:
+      type: object
+      required:
+        - ticketNumber
+        - ticketingAirline
+        - ticketStatus
+        - issuedDate
+        - traveller
+        - bookedSegments
+      properties:
+        ticketNumber:
+          $ref: '#/components/schemas/TicketNumber'
+        ticketingAirline:
+          $ref: '#/components/schemas/AirlineCode'
+        ticketStatus:
+          $ref: '#/components/schemas/TicketStatus'
+        issuedDate:
+          type: string
+          format: date
+        traveller:
+          $ref: '#/components/schemas/Traveller'
+        bookedSegments:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookedSegment'
+
+    Traveller:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - passengerType
+        - document
+        - contact
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        salutation:
+          $ref: '#/components/schemas/Salutation'
+        gender:
+          $ref: '#/components/schemas/Gender'
+        passengerType:
+          $ref: '#/components/schemas/PassengerType'
+        document:
+          $ref: '#/components/schemas/Document'
+        frequentFlyerNumber:
+          type: string
+        contact:
+          $ref: '#/components/schemas/Contact'
+        linkedUserAccount:
+          type: string
+
+    Document:
+      type: object
+      required:
+        - documentType
+        - documentNumber
+        - personalNumber
+        - issuingCountry
+        - issuedDate
+        - expiryDate
+      properties:
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        documentNumber:
+          type: string
+        personalNumber:
+          type: string
+        issuingCountry:
+          type: string
+        issuedDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+
+    Contact:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+
+    BookedSegment:
+      type: object
+      required:
+        - origin
+        - destination
+        - flightNumber
+        - flightDate
+        - airlineCode
+        - departureDate
+        - arrivalDate
+        - bookingClass
+        - price
+        - taxPercentage
+      properties:
+        origin:
+          $ref: '#/components/schemas/IATACode'
+        destination:
+          $ref: '#/components/schemas/IATACode'
+        flightNumber:
+          $ref: '#/components/schemas/FlightNumber'
+        flightDate:
+          type: string
+          format: date
+        airlineCode:
+          $ref: '#/components/schemas/AirlineCode'
+        departureDate:
+          type: string
+          format: date-time
+        arrivalDate:
+          type: string
+          format: date-time
+        bookingClass:
+          $ref: '#/components/schemas/BookingClass'
+        price:
+          type: number
+          format: double
+        taxPercentage:
+          type: number
+          format: double
+          min: 0
+          max: 100
+
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+
+    User:
+      type: object
+      required:
+        - userId
+        - firstName
+        - lastName
+        - email
+        - dateOfBirth
+      properties:
+        userId:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        frequentFlyerNumber:
+          type: string
+        document:
+          $ref: '#/components/schemas/Document'
+        dateOfBirth:
+          type: string
+          format: date
+
+    DocumentType:
+      type: string
+      enum:
+        - PASSPORT
+        - NATIONAL_ID
+
+    PassengerType:
+      type: string
+      enum:
+        - ADULT
+        - CHILD
+        - INFANT
+
+    Gender:
+      type: string
+      enum:
+        - M
+        - F
+
+    Salutation:
+      type: string
+      enum:
+        - MR
+        - MS
+        - MRS
+        - CHD
+        - INF
+
+    TicketStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - CANCELED
+        - REFUNDED
+
+    BookingClass:
+      type: string
+      enum:
+        - ECONOMY
+        - PREMIUM_ECONOMY
+        - BUSINESS
+        - FIRST
+
+    TicketNumber:
+      type: string
+      pattern: '^[0-9]{3}-[0-9]{8}$'
+      example: 020-00000000
+
+    BookingReference:
+      type: string
+      pattern: '^[A-Z0-9]{6}$'
+      example: S2KF5A
+
+    IATACode:
+      type: string
+      pattern: '^[A-Z]{3}$'
+      example: TIA
+
+    AirlineCode:
+      type: string
+      pattern: '^[A-Z]{2}$'
+      example: LH
+
+    FlightNumber:
+      type: string
+      pattern: '^[A-Z]{2}[0-9]{4}$'
+      example: LH1000
