@@ -14,17 +14,6 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id          Int      @id @default(autoincrement())
-    name        String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    createdBy   User     @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -61,43 +50,33 @@ model VerificationToken {
 }
 
 model User {
-    id                  String    @id @default(cuid())
+    id                  String          @id @default(cuid())
     name                String
-    email               String    @unique
+    email               String          @unique
     password            String
     dateOfBirth         DateTime
     documentId          Int?
     addressId           Int?
     frequentFlyerNumber String?
     phone               String?
+    tags                String
+    salutation          Salutation
+    gender              Gender
+    passengerType       PassengerType
     accounts            Account[]
     sessions            Session[]
     Booking             Booking[]
-    posts               Post[]
-    document            Document? @relation(fields: [documentId], references: [id])
-    address             Address?  @relation(fields: [addressId], references: [id])
+    address             Address?        @relation(fields: [addressId], references: [id])
+    LoyaltyPoints       LoyaltyPoints[]
+    ReferdBooking       Booking[]       @relation("Refered")
 }
 
 model Address {
-    id         Int       @id @default(autoincrement())
+    id         Int    @id @default(autoincrement())
     street     String
     city       String
     postalCode String
     User       User[]
-    Contact    Contact[]
-}
-
-// Define the Document model
-model Document {
-    id             Int          @id @default(autoincrement())
-    documentType   DocumentType
-    documentNumber String
-    personalNumber String
-    issuingCountry String
-    issuedDate     DateTime
-    expiryDate     DateTime
-    User           User[]
-    Traveller      Traveller[]
 }
 
 enum DocumentType {
@@ -107,64 +86,30 @@ enum DocumentType {
 
 // Define the Booking model
 model Booking {
-    id                    Int              @id @default(autoincrement())
-    bookingReference      BookingReference @relation(fields: [bookingReferenceValue], references: [value])
-    tickets               Ticket[]
-    user                  User             @relation(fields: [userUserId], references: [id])
-    bookingReferenceValue String
-    userUserId            String
-}
-
-// Define the BookingReference model
-model BookingReference {
-    value   String    @id
-    Booking Booking[]
+    id         Int      @id @default(autoincrement())
+    tickets    Ticket[]
+    user       User     @relation(fields: [userUserId], references: [id])
+    refered    User?    @relation("Refered", fields: [referedBy], references: [id])
+    referedBy  String?
+    userUserId String
 }
 
 // Define the Ticket model
 model Ticket {
-    id                Int             @id @default(autoincrement())
-    ticketNumber      TicketNumber    @relation(fields: [ticketNumberValue], references: [value])
-    ticketingAirline  AirlineCode     @relation(fields: [airlineCodeValue], references: [value])
-    ticketStatus      TicketStatus
-    issuedDate        DateTime
-    travellId         Int
-    traveller         Traveller       @relation(fields: [travellId], references: [id])
-    bookedSegments    BookedSegment[]
-    bookingId         Int
-    Booking           Booking         @relation(fields: [bookingId], references: [id])
-    ticketNumberValue String
-    airlineCodeValue  String
-}
-
-// Define the TicketNumber model
-model TicketNumber {
-    value  String   @id
-    Ticket Ticket[]
+    id               Int             @id @default(autoincrement())
+    ticketingAirline Airline         @relation(fields: [arlineId], references: [id])
+    ticketStatus     TicketStatus
+    issuedDate       DateTime
+    bookedSegments   BookedSegment[]
+    bookingId        Int
+    Booking          Booking         @relation(fields: [bookingId], references: [id])
+    arlineId         Int
 }
 
 enum TicketStatus {
     ACTIVE
     CANCELED
     REFUNDED
-}
-
-// Define the Traveller model
-model Traveller {
-    id                  Int           @id @default(autoincrement())
-    firstName           String
-    lastName            String
-    middleName          String?
-    salutation          Salutation
-    gender              Gender
-    passengerType       PassengerType
-    documentId          Int
-    document            Document      @relation(fields: [documentId], references: [id])
-    frequentFlyerNumber String?
-    contactId           Int
-    contact             Contact       @relation(fields: [contactId], references: [id])
-    linkedUserAccount   String?
-    Ticket              Ticket[]
 }
 
 enum Salutation {
@@ -186,33 +131,23 @@ enum PassengerType {
     INFANT
 }
 
-// Define the Contact model
-model Contact {
-    id        Int         @id @default(autoincrement())
-    email     String?
-    phone     String?
-    addressId Int
-    address   Address?    @relation(fields: [addressId], references: [id])
-    Traveller Traveller[]
-}
-
 // Define the BookedSegment model
 model BookedSegment {
-    id                Int          @id @default(autoincrement())
-    destination       IATACode     @relation(fields: [iATACodeValue], references: [value])
-    flightNumber      FlightNumber @relation(fields: [flightNumberValue], references: [value])
-    flightDate        DateTime
-    airlineCode       AirlineCode  @relation(fields: [airlineCodeValue], references: [value])
-    departureDate     DateTime
-    arrivalDate       DateTime
-    bookingClass      BookingClass
-    price             Float
-    taxPercentage     Float
-    ticketId          Int
-    Ticket            Ticket       @relation(fields: [ticketId], references: [id])
-    iATACodeValue     String
-    flightNumberValue String
-    airlineCodeValue  String
+    id            Int          @id @default(autoincrement())
+    destination   Location     @relation(fields: [destinationId], references: [id])
+    flight        Flights      @relation(fields: [flightId], references: [id])
+    flightDate    DateTime
+    airlineCode   Airline?     @relation(fields: [airlineId], references: [id])
+    departureDate DateTime
+    arrivalDate   DateTime
+    bookingClass  BookingClass
+    price         Float
+    taxPercentage Float
+    ticketId      Int
+    Ticket        Ticket       @relation(fields: [ticketId], references: [id])
+    destinationId Int
+    flightId      Int
+    airlineId     Int?
 }
 
 enum BookingClass {
@@ -222,21 +157,56 @@ enum BookingClass {
     FIRST
 }
 
-// Define the IATACode model
-model IATACode {
-    value         String          @id
-    BookedSegment BookedSegment[]
-}
-
-// Define the AirlineCode model
-model AirlineCode {
-    value         String          @id
+// Define the Airline model
+model Airline {
+    id            Int             @id @default(autoincrement())
+    value         String
+    name          String
     Ticket        Ticket[]
     BookedSegment BookedSegment[]
+    Flights       Flights[]
+    LoyaltyPoints LoyaltyPoints[]
 }
 
-// Define the FlightNumber model
-model FlightNumber {
-    value         String          @id
+model Flights {
+    id                 Int             @id @default(autoincrement())
+    destination        Location        @relation(fields: [destinationId], references: [id])
+    startDestination   Location        @relation("Start Location", fields: [startDestinationId], references: [id])
+    destinationId      Int
+    flightDate         DateTime
+    Airline            Airline         @relation(fields: [airlineId], references: [id])
+    airlineId          Int
+    BookedSegment      BookedSegment[]
+    startDestinationId Int
+}
+
+model Location {
+    id            Int             @id @unique @default(autoincrement())
+    name          String
+    iataCode      String
+    latitude      Float?
+    longitude     Float?
+    country       String
+    City          String
     BookedSegment BookedSegment[]
+    Flights       Flights[]
+    Events        Events[]
+    StartFlights  Flights[]       @relation("Start Location")
+}
+
+model LoyaltyPoints {
+    id        Int     @id @default(autoincrement())
+    user      User    @relation(fields: [userId], references: [id])
+    userId    String
+    airline   Airline @relation(fields: [airlineId], references: [id])
+    airlineId Int
+}
+
+model Events {
+    id          Int      @id @default(autoincrement())
+    name        String
+    description String
+    Location    Location @relation(fields: [locationId], references: [id])
+    locationId  Int
+    tags        String
 }
