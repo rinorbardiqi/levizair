@@ -30,8 +30,8 @@ async function predictAiLocation(aiQuery: string) {
       const dataSet =
         entities?.filter((items) => items.type === "LOCATION") ?? [];
 
-      return dataSet.reduce((prev, current) => {
-        return prev?.salience ?? 0 > Number(current?.salience) ? prev : current;
+      return dataSet.sort((a, b) => {
+        return Number(b.salience) - Number(a.salience);
       });
     });
   } catch (error) {
@@ -78,9 +78,40 @@ export const googleAiRouter = createTRPCRouter({
 
     const aiPredictedLocation = await predictAiLocation(location);
 
+    const bookingDealsBasedOnPrediction: {
+      id: number;
+      destinationId: number;
+      flightDate: Date;
+      airlineId: number;
+      startDestinationId: number;
+    }[] = [];
+
+    await Promise.all(
+      aiPredictedLocation?.map(async (location) => {
+        if (bookingDealsBasedOnPrediction.length >= 3) return;
+
+        const response = await ctx.db.flights.findFirst({
+          where: {
+            destination: {
+              country: location.name ?? "",
+            },
+          },
+          include: {
+            destination: true,
+            Airline: true,
+          },
+        });
+
+        if (!response) return;
+
+        bookingDealsBasedOnPrediction.push(response);
+      }),
+    );
+
     const predicted = {
-      location: aiPredictedLocation.name,
-      score: (Number(aiPredictedLocation?.salience) * 100).toFixed(2),
+      locationName: aiPredictedLocation?.[0]?.name ?? "",
+      score: (Number(aiPredictedLocation?.[0]?.salience) * 100).toFixed(2),
+      deals: bookingDealsBasedOnPrediction,
     };
 
     return {
