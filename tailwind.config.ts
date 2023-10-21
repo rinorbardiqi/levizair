@@ -7,6 +7,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+        montserrat: "Montserrat",
+        neue: "Helvetica Neue",
       },
     },
   },
