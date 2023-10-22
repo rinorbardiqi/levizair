@@ -210,5 +210,6 @@ model Events {
     description String
     Location    Location @relation(fields: [locationId], references: [id])
     locationId  Int
+    date        DateTime
     tags        String
 }

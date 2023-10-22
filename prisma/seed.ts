@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { PrismaClient } from "@prisma/client";
+import { Events, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -592,6 +592,54 @@ async function main() {
     },
   ];
 
+  const events: Events[] = [
+    {
+      id: 1,
+      date: faker.date.future(),
+      description:
+        "Join us for a fun-filled festival featuring a wide variety of delicious food and drinks. Don't miss BeerFest 2023!",
+      name: "BeerFest",
+      locationId: 16,
+      tags: "food,festival",
+    },
+    {
+      id: 2,
+      date: faker.date.future(),
+      description:
+        "Experience a weekend of live music, arts, and entertainment at the Riverside Music Festival. Fun for the whole family!",
+      name: "Riverside Music Festival",
+      locationId: 14,
+      tags: "music,festival,family",
+    },
+    {
+      id: 3,
+      date: faker.date.future(),
+      description:
+        "Explore the latest trends in technology and innovation at the Tech Expo. Discover groundbreaking products and ideas.",
+      name: "Tech Expo",
+      locationId: 13,
+      tags: "technology,science,education",
+    },
+    {
+      id: 4,
+      date: faker.date.future(),
+      description:
+        "Calling all book lovers! Join us for a literary journey at the City Book Fair. Discover your next great read.",
+      name: "City Book Fair",
+      locationId: 20,
+      tags: "books,literature,education",
+    },
+    {
+      id: 5,
+      date: faker.date.future(),
+      description:
+        "Gear up for an adrenaline-pumping adventure! The Extreme Sports Fest is here. Thrills and excitement await.",
+      name: "Extreme Sports Fest",
+      locationId: 14,
+      tags: "sports,adventure,festival",
+    },
+  ];
+
   Array.from({ length: 10 }).map(async (_, id) => {
     const data = {
       id: faker.string.uuid(),
@@ -687,6 +735,13 @@ async function main() {
 
   for await (const item of loyaltyPoints) {
     await prisma.loyaltyPoints.create({
+      data: {
+        ...item,
+      },
+    });
+  }
+  for await (const item of events) {
+    await prisma.events.create({
       data: {
         ...item,
       },

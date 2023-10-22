@@ -22,9 +22,6 @@ const EventCard = ({
   secondTicket,
 }: P) => {
   const wrapper = isOpen ? "p-6 rounded-xl" : "";
-  const buttonColor = isOpen
-    ? "bg-white text-mblue border border-mblue"
-    : "bg-mblue text-white";
   return (
     <div
       className={`w-full ${wrapper}`}
@@ -47,12 +44,16 @@ const EventCard = ({
               {location}
             </div>
           </div>
-          <Button
-            onClick={onClick}
-            className={`ml-auto h-auto w-fit rounded px-8 py-2 text-base font-medium ${buttonColor}`}
-          >
-            % {isOpen ? "Close" : "Open"} Tickets
-          </Button>
+          {isOpen || (
+            <Button
+              onClick={onClick}
+              className={
+                "ml-auto h-auto w-fit rounded bg-mblue px-8 py-2 text-base font-medium text-white"
+              }
+            >
+              % Open Tickets
+            </Button>
+          )}
         </div>
         <div className="my-2" />
         {isOpen && (

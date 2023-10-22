@@ -54,7 +54,7 @@ const EventTicket = ({
         </div>
 
         <div className="h-3"></div>
-        <SelectOptionsButton price={originalPrice} />
+        <SelectOptionsButton price={discountedPrice} />
       </div>
     </div>
   );

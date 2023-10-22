@@ -13,6 +13,8 @@ import EventTicket from "~/components/EventTicket";
 import EventCard from "~/components/EventCard";
 import { api } from "~/utils/api";
 import HeroTag from "~/components/HeroTag";
+import { getTagDifference, newGraph } from "~/libs/Tagging";
+import { useSession } from "next-auth/react";
 
 export const formatDateAsCustomFormat = (date: Date): string => {
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -53,12 +55,35 @@ export default function Home({
 }) {
   const [openReferedBy, setOpenReferedBy] = useState(false);
   const [eventsOpened, setEventsOpened] = useState([true, false, false]);
-  const flipEvent = (idx: number, arr: boolean[]) => {
-    const copy = [...arr];
-    copy[idx] = !copy[idx];
-    setEventsOpened(copy);
+  const flipEvent = (idx: number) => {
+    const set = [false, false, false];
+    set[idx] = true;
+    setEventsOpened(set);
   };
+  const { data } = useSession();
+  const { data: events } = api.tags.personalizedEvents.useQuery({
+    id: data?.user.id ?? "",
+  });
+  console.log(events);
+
   const { data: deals } = api.googleAi.predict.useQuery();
+
+  const getDuration = (startDate: Date, endDate: Date): string => {
+    const durationInMilliseconds = endDate.getTime() - startDate.getTime();
+
+    const millisecondsInMinute = 60 * 1000;
+    let minutes = Math.floor(durationInMilliseconds / millisecondsInMinute);
+    const hours = Math.floor(minutes / 60);
+    minutes %= 60;
+
+    if (hours > 0 && minutes > 0) {
+      return `${hours}h ${minutes}min`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}min`;
+    } else {
+      return `${minutes}min`;
+    }
+  };
 
   const getRandomPercentage = (min: number, max: number): number => {
     return Math.random() * (max - min) + min;
@@ -141,45 +166,45 @@ export default function Home({
             Discover Unmissable Events and Secure Exclusive Plane Tickets Today
           </p>
           <div>
-            {Array.from({ length: 3 }, (_, idx) => {
+            {events?.map(({ evnt }, idx) => {
               return (
                 <Row key={idx} gutter={16} style={{ marginBottom: "24px" }}>
                   <EventCard
-                    name="BeerFest"
-                    location="Sttugart, Germany"
-                    date="mon, 13 nov"
+                    name={evnt.name}
+                    location={evnt?.Location?.country ?? ""}
+                    date={formatDateAsCustomFormat(evnt.date)}
                     isOpen={eventsOpened[idx]}
-                    onClick={() => flipEvent(idx, eventsOpened)}
+                    onClick={() => flipEvent(idx)}
                     firstTicket={
                       <EventTicket
-                        originalPrice={200}
-                        discountedPrice={150}
+                        originalPrice={250}
+                        discountedPrice={200}
                         departureCountry="Prishtina"
                         departureTime="10:30"
-                        arrivalCountry="Tirana"
+                        arrivalCountry={evnt?.Location?.country ?? ""}
                         arrivalTime="12:30"
-                        date="mon, 13 nov"
+                        date={formatDateAsCustomFormat(evnt.date)}
                         countryImage={`/images/image${idx + 1}.png`}
                         airlineLogo="/images/airline_logo_1.svg"
                         airplaneCode="WIZ 1337"
-                        loyalty={17}
-                        duration={"blah"}
+                        loyalty={13}
+                        duration={"2h"}
                       />
                     }
                     secondTicket={
                       <EventTicket
-                        originalPrice={200}
-                        discountedPrice={150}
+                        originalPrice={189}
+                        discountedPrice={130}
                         departureCountry="Prishtina"
-                        departureTime="10:30"
-                        arrivalCountry="Tirana"
-                        arrivalTime="12:30"
-                        date="mon, 13 nov"
+                        departureTime="12:30"
+                        arrivalCountry={evnt?.Location?.country ?? ""}
+                        arrivalTime="14:00"
+                        date={formatDateAsCustomFormat(evnt.date)}
                         countryImage={`/images/image${idx + 1}.png`}
                         airlineLogo="/images/airline_logo_1.svg"
                         airplaneCode="WIZ 1337"
                         loyalty={17}
-                        duration={"blah"}
+                        duration={"1h 30m"}
                       />
                     }
                   />

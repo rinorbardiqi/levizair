@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const loyaltyPointsRouter = createTRPCRouter({
-  loyaltyPoints: protectedProcedure
+  loyaltyPoints: publicProcedure
     .input(
       z.object({
         userId: z.string(),

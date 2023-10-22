@@ -4,6 +4,7 @@ import {
   googleAiRouter,
   loyaltyPointsRouter,
   postRouter,
+  tagRouter,
   userRouter,
 } from "./routers/index";
 import { createTRPCRouter } from "~/server/api/trpc";
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   flight: flightRouter,
   loyaltyPoints: loyaltyPointsRouter,
   booking: bookingRouter,
+  tags: tagRouter,
 });
 
 // export type definition of API

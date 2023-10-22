@@ -91,17 +91,11 @@ export const newGraph = () => {
   const graph = new Graph({ type: "undirected" });
 
   Object.keys(Events).forEach((node) => {
-    graph.addNode(node, {
-      x: Math.random() * 300,
-      y: Math.random() * 300,
-    });
+    graph.addNode(node);
   });
 
   Object.keys(Interests).forEach((node) => {
-    graph.addNode(node, {
-      x: Math.random() * 300,
-      y: Math.random() * 300,
-    });
+    graph.addNode(node);
   });
 
   Connections.forEach(([first, second]) => {
@@ -124,6 +118,35 @@ export const getTagDifference = (
     return path.length - 1;
   } catch (error) {
     console.log("Graph node not found!");
-    return 0;
+    return 10;
   }
+};
+
+export interface TagFitness {
+  tag: string;
+  fitness: number;
+}
+
+export const tagListDifference = (
+  graph: Graph,
+  target: string[],
+  destination: string[],
+) => {
+  if (target.length === 0 || destination.length === 0) return 0;
+
+  const fitnessFunction = (distance: number) =>
+    distance === 0 ? 20 : 10 / distance;
+
+  const fitness = target
+    .map((tag) => {
+      const tagFitness = destination
+        .map((destTag) => {
+          const distance = getTagDifference(graph, tag, destTag);
+          return fitnessFunction(distance);
+        })
+        .reduce((acc, cur) => acc + cur, 0);
+      return tagFitness;
+    })
+    .reduce((acc, cur) => acc + cur, 0);
+  return fitness;
 };
