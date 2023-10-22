@@ -147,7 +147,7 @@ export default function Home({
                       arrivalTime={formatHourMinute(item.arriveDate!)}
                       date={formatDateAsCustomFormat(item.departureDate!)}
                       countryImage={`/images/image${idx + 1}.png`}
-                      airlineLogo="/images/logo-luft.png"
+                      airlineLogo="/images/airline_logo_1.svg"
                       airplaneCode="WIZ 1337"
                       loyalty={item.loialtyPoints ?? 15}
                       duration={item?.duration ?? ""}
