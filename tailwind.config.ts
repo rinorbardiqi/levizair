@@ -14,6 +14,7 @@ export default {
         mblue: "#3957CC",
         mlightblue: "#5D90DB",
         mgray: "#E0E0E0",
+        lgray: "#AFAFAF",
         mwhite: "#F9F9F9",
         myellow: "#FFF4BC",
         mdarkgray: "#C8C8C8",
