@@ -1,6 +1,7 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { google } from "googleapis";
 import language from "@google-cloud/language";
+import { calculateLoyaltyPoints } from "./flights";
 
 const auth = new google.auth.GoogleAuth({
   keyFile: `${process.cwd()}/levizair.json`,
@@ -9,6 +10,28 @@ const auth = new google.auth.GoogleAuth({
 const client = new language.LanguageServiceClient({
   auth,
 });
+
+const parseDateString = (dateString: string): Date => {
+  const parsedDate = new Date(Date.parse(dateString));
+  return parsedDate;
+};
+
+const getDuration = (startDate: Date, endDate: Date): string => {
+  const durationInMilliseconds = endDate.getTime() - startDate.getTime();
+
+  const millisecondsInMinute = 60 * 1000;
+  let minutes = Math.floor(durationInMilliseconds / millisecondsInMinute);
+  const hours = Math.floor(minutes / 60);
+  minutes %= 60;
+
+  if (hours > 0 && minutes > 0) {
+    return `${hours}h ${minutes}min`;
+  } else if (hours > 0) {
+    return `${hours}h ${minutes}min`;
+  } else {
+    return `${minutes}min`;
+  }
+};
 
 async function predictAiLocation(aiQuery: string) {
   const request = {
@@ -79,11 +102,14 @@ export const googleAiRouter = createTRPCRouter({
     const aiPredictedLocation = await predictAiLocation(location);
 
     const bookingDealsBasedOnPrediction: {
-      id: number;
-      destinationId: number;
-      flightDate: Date;
-      airlineId: number;
-      startDestinationId: number;
+      salience?: number | null;
+      loialtyPoints: number;
+      arriveDate?: Date;
+      departureDate?: Date;
+      price?: number;
+      departureCity: string;
+      arrivalCity: string;
+      duration?: string;
     }[] = [];
 
     await Promise.all(
@@ -99,19 +125,38 @@ export const googleAiRouter = createTRPCRouter({
           include: {
             destination: true,
             Airline: true,
+            BookedSegment: true,
+            startDestination: true,
           },
         });
 
         if (!response) return;
-
-        bookingDealsBasedOnPrediction.push(response);
+        const flightBookings = bookings.filter(
+          (booking) => booking.tickets?.[0]?.arlineId === response.airlineId,
+        ).length;
+        bookingDealsBasedOnPrediction.push({
+          salience: location.salience,
+          loialtyPoints: calculateLoyaltyPoints(flightBookings, false),
+          departureDate: response.BookedSegment[0]?.departureDate,
+          arriveDate: response.BookedSegment[0]?.arrivalDate,
+          price: response.BookedSegment[0]?.price,
+          departureCity: response.startDestination.City,
+          arrivalCity: response.destination.City,
+          duration: getDuration(
+            parseDateString(String(response.BookedSegment[0]?.departureDate)),
+            parseDateString(String(response.BookedSegment[0]?.arrivalDate)),
+          ),
+        });
       }),
     );
 
+    const bookingDeals = bookingDealsBasedOnPrediction.sort((a, b) => {
+      return Number(b.salience) - Number(a.salience);
+    });
     const predicted = {
       locationName: aiPredictedLocation?.[0]?.name ?? "",
       score: (Number(aiPredictedLocation?.[0]?.salience) * 100).toFixed(2),
-      deals: bookingDealsBasedOnPrediction,
+      deals: bookingDeals.splice(0, 3),
     };
 
     return {

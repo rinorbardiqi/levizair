@@ -14,7 +14,7 @@ const frequentFlyerMultiplier = (numberOfFlights: number) => {
   return 1;
 };
 
-const calculateLoyaltyPoints = (
+export const calculateLoyaltyPoints = (
   numberOfFlights: number,
   isSpecialDeal: boolean,
 ) => {

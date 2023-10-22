@@ -3,7 +3,6 @@ import AirlineTitle from "../AirlineTitle";
 import DiscountDeals from "../DiscountDeals";
 import SelectOptionsButton from "../SelectOptionsButton";
 import SavePercentage from "../SavePercentage";
-import imageParis from "public/images/image1.png";
 import Image from "next/image";
 export interface DiscountCardProps {
   originalPrice: number;
@@ -17,6 +16,7 @@ export interface DiscountCardProps {
   airlineLogo: string;
   airplaneCode: string;
   loyalty: number;
+  duration: string;
 }
 
 const BookingCard = ({
@@ -31,11 +31,11 @@ const BookingCard = ({
   airlineLogo,
   airplaneCode,
   loyalty,
+  duration,
 }: DiscountCardProps) => {
   const savePercentage = Math.round(
     ((originalPrice - discountedPrice) / originalPrice) * 100,
   );
-  const duration = "1h 50m";
   return (
     <div>
       <div className="relative w-full">

@@ -10,9 +10,50 @@ import { useState } from "react";
 import { Row, Col, Button, Modal } from "antd";
 import BookingCard from "~/components/BookingCard";
 import EventCard from "~/components/EventCard";
-
+import { api } from "~/utils/api";
 export default function Home() {
   const [openReferedBy, setOpenReferedBy] = useState(false);
+  const { data: deals } = api.googleAi.predict.useQuery();
+  function formatHourMinute(date: Date): string {
+    const hours = date.getUTCHours().toString().padStart(2, "0");
+    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  }
+
+  const getRandomPercentage = (min: number, max: number): number => {
+    return Math.random() * (max - min) + min;
+  };
+
+  const applyRandomDiscount = (price: number): number => {
+    const randomPercentage = getRandomPercentage(10, 15);
+    const discountAmount = (randomPercentage / 100) * price;
+    const discountedPrice = price - discountAmount;
+    return Math.round(discountedPrice);
+  };
+  const formatDateAsCustomFormat = (date: Date): string => {
+    const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    const months = [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC",
+    ];
+
+    const dayOfWeek = daysOfWeek[date.getUTCDay()];
+    const day = date.getUTCDate();
+    const month = months[date.getUTCMonth()];
+
+    return `${dayOfWeek}, ${day} ${month}`;
+  };
+
   return (
     <>
       <Head>
@@ -48,21 +89,24 @@ export default function Home() {
           </p>
           <div>
             <Row gutter={16}>
-              {Array.from({ length: 3 }, (_, idx) => {
+              {deals?.predicted.deals?.map((item, idx) => {
                 return (
                   <Col span={8} key={idx}>
                     <BookingCard
-                      originalPrice={200}
-                      discountedPrice={150}
-                      departureCountry="Prishtina"
-                      departureTime="10:30"
-                      arrivalCountry="Tirana"
-                      arrivalTime="12:30"
-                      date="mon, 13 nov"
+                      originalPrice={Number(item.price ?? 0)}
+                      discountedPrice={applyRandomDiscount(
+                        Number(item.price ?? 0),
+                      )}
+                      departureCountry={item.departureCity}
+                      departureTime={formatHourMinute(item.departureDate!)}
+                      arrivalCountry={item.arrivalCity}
+                      arrivalTime={formatHourMinute(item.arriveDate!)}
+                      date={formatDateAsCustomFormat(item.departureDate!)}
                       countryImage={`/images/image${idx + 1}.png`}
                       airlineLogo="/images/airline_logo_1.svg"
                       airplaneCode="WIZ 1337"
-                      loyalty={17}
+                      loyalty={item.loialtyPoints ?? 15}
+                      duration={item.duration ?? ""}
                     />
                   </Col>
                 );
@@ -93,6 +137,7 @@ export default function Home() {
                     airlineLogo="/images/airline_logo_1.svg"
                     airplaneCode="WIZ 1337"
                     loyalty={17}
+                    duration="4"
                   />
                 </Row>
               );

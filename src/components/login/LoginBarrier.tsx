@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { UNPROTECTED_ROUTES } from "./config";
 import { useSession } from "next-auth/react";
 import Lottie from "lottie-react";
-import LoadingLottie from "../../lottie/loading.json";
+import LoadingLottie from "../../lottie/loadingPlane.json";
 
 interface P {
   children: JSX.Element | JSX.Element[];
