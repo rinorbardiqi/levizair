@@ -44,7 +44,7 @@ const EventCard = ({
               {location}
             </div>
           </div>
-          {isOpen || (
+          {!isOpen && (
             <Button
               onClick={onClick}
               className={
