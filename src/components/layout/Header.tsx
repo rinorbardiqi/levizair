@@ -44,7 +44,7 @@ const HeaderLayout = () => {
         <div className="relative ml-auto flex">
           {menu.map((item) => (
             <span
-              className={`font-montserrat ml-10 flex cursor-pointer text-base leading-6 ${
+              className={`ml-10 flex cursor-pointer font-montserrat text-base leading-6 ${
                 item.active ? "text-[#3957CC]" : "text-black"
               }`}
               key={item.key}
