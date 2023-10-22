@@ -1,60 +1,66 @@
-import AirlineTitle from "../AirlineTitle";
-import DateDetails from "../DateDetails";
-import DiscountDeals from "../DiscountDeals";
-import EarnPoints from "../EarnPoints";
-import SelectOptionsButton from "../SelectOptionsButton";
-import { type DiscountCardProps } from "../BookingCard";
+import DateCode from "~/DateCode";
+import Image from "next/image";
+import { Button, Col, Row } from "antd";
+
+interface P {
+  name: string;
+  location: string;
+  date: string;
+  isOpen?: boolean;
+  onClick: () => void;
+  firstTicket: JSX.Element;
+  secondTicket: JSX.Element;
+}
 
 const EventCard = ({
-  originalPrice,
-  discountedPrice,
-  departureCountry,
-  departureTime,
-  arrivalCountry,
-  arrivalTime,
+  name,
+  location,
   date,
-  countryImage,
-  airlineLogo,
-  airplaneCode,
-  loyalty,
-}: DiscountCardProps) => {
-  const savePercentage = Math.round(
-    ((originalPrice - discountedPrice) / originalPrice) * 100,
-  );
-  const duration = "1h 50m";
+  isOpen,
+  onClick,
+  firstTicket,
+  secondTicket,
+}: P) => {
+  const wrapper = isOpen ? "p-6 rounded-xl" : "";
+  const buttonColor = isOpen
+    ? "bg-white text-mblue border border-mblue"
+    : "bg-mblue text-white";
   return (
-    <div className="flex w-full flex-row">
-      <div className="border-mgray rounded-l-xl border-y border-l bg-white p-6">
-        <AirlineTitle
-          logo={airlineLogo}
-          departure={departureCountry}
-          arrival={arrivalCountry}
-          points={loyalty}
-        />
+    <div
+      className={`w-full ${wrapper}`}
+      style={{ backgroundImage: isOpen ? 'url("/images/rect.png"' : "none" }}
+    >
+      <div className="rounded-md border bg-white p-4">
+        <div className="flex items-start ">
+          <div className="flex flex-col gap-2">
+            <span className="text-xl font-semibold text-mblue">{name}</span>
+            <DateCode date={date} />
 
-        <div className="h-6"></div>
-
-        <DateDetails
-          departureTime={departureTime}
-          arrivalTime={arrivalTime}
-          date={date.toUpperCase()}
-          airplaneCode={airplaneCode}
-          duration={duration}
-        />
-      </div>
-      <div className="bg-mwhite border-mgray flex flex-col rounded-r-xl border-y border-r p-6">
-        <EarnPoints points={loyalty} isLong />
-
-        <div className="mt-auto">
-          <DiscountDeals
-            original={originalPrice}
-            discounted={discountedPrice}
-            save={savePercentage}
-          />
+            <div className="justify-left flex items-center gap-1 text-base">
+              <Image
+                width={16}
+                height={16}
+                className="inline"
+                alt="->"
+                src="/images/location.svg"
+              />
+              {location}
+            </div>
+          </div>
+          <Button
+            onClick={onClick}
+            className={`ml-auto h-auto w-fit rounded px-8 py-2 text-base font-medium ${buttonColor}`}
+          >
+            % {isOpen ? "Close" : "Open"} Tickets
+          </Button>
         </div>
-
-        <div className="h-3"></div>
-        <SelectOptionsButton price={originalPrice} />
+        <div className="my-2" />
+        {isOpen && (
+          <Row gutter={24}>
+            <Col span={12}>{firstTicket}</Col>
+            <Col span={12}>{secondTicket}</Col>
+          </Row>
+        )}
       </div>
     </div>
   );

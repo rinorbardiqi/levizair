@@ -37,8 +37,8 @@ const HeaderLayout = ({
           className="cursor-pointer"
           src="/images/logo.svg"
           alt="logo"
-          width={140}
-          height={41}
+          width={180}
+          height={80}
           onClick={() => {
             onMenuChange("1");
             void router.push("/");
@@ -48,7 +48,7 @@ const HeaderLayout = ({
           {menu.map((item) => (
             <span
               className={`ml-10 flex cursor-pointer font-montserrat text-base leading-6 ${
-                item.active ? "text-[#3957CC]" : "text-black"
+                item.active ? "text-mblue" : "text-black"
               }`}
               key={item.key}
               onClick={() => {

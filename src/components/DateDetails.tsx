@@ -1,4 +1,5 @@
 import Image from "next/image";
+import DateCode from "~/DateCode";
 
 interface P {
   departureTime: string;
@@ -28,17 +29,7 @@ const DateDetails = ({
         />
         {arrival}
       </div>
-      {/* Date and code */}
-      <div className="justify-left flex items-center gap-1 text-base">
-        <Image
-          width={16}
-          height={16}
-          className="inline"
-          alt="->"
-          src="/images/calendar.svg"
-        />
-        {date} - {airplaneCode}
-      </div>
+      <DateCode date={date} code={airplaneCode} />
       {/* Duration */}
       <div className="justify-left flex items-center gap-1 text-base">
         <Image

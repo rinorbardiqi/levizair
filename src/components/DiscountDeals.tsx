@@ -13,7 +13,7 @@ const DiscountDeals = ({ original, discounted, loyalty, save }: P) => {
       <div className="flex items-end gap-2">
         <div className="text-2xl font-semibold">${discounted}+</div>
         <span className="text-mred line-through">
-          <div className="text-mdarkgray text-sm  font-medium">${original}</div>
+          <div className="text-sm font-medium text-mdarkgray">${original}</div>
         </span>
         {loyalty !== undefined && (
           <div className="ml-auto">

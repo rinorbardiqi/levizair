@@ -91,11 +91,17 @@ export const newGraph = () => {
   const graph = new Graph({ type: "undirected" });
 
   Object.keys(Events).forEach((node) => {
-    graph.addNode(node);
+    graph.addNode(node, {
+      x: Math.random() * 300,
+      y: Math.random() * 300,
+    });
   });
 
   Object.keys(Interests).forEach((node) => {
-    graph.addNode(node);
+    graph.addNode(node, {
+      x: Math.random() * 300,
+      y: Math.random() * 300,
+    });
   });
 
   Connections.forEach(([first, second]) => {

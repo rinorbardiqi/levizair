@@ -8,9 +8,12 @@ import footerImg from "public/images/Footer.png";
 import HeaderLayout, { type MenuP } from "~/components/layout/Header";
 import { useState } from "react";
 import { Row, Col, Button, Modal } from "antd";
-import BookingCard from "~/components/BookingCard";
+import TicketCard from "~/components/TicketCard";
+import EventTicket from "~/components/EventTicket";
 import EventCard from "~/components/EventCard";
 import { api } from "~/utils/api";
+import HeroTag from "~/components/HeroTag";
+
 export default function Home({
   menu,
   onMenuChange,
@@ -19,6 +22,12 @@ export default function Home({
   onMenuChange: (key: string) => void;
 }) {
   const [openReferedBy, setOpenReferedBy] = useState(false);
+  const [eventsOpened, setEventsOpened] = useState([true, false, false]);
+  const flipEvent = (idx: number, arr: boolean[]) => {
+    const copy = [...arr];
+    copy[idx] = !copy[idx];
+    setEventsOpened(copy);
+  };
   const { data: deals } = api.googleAi.predict.useQuery();
   function formatHourMinute(date: Date): string {
     const hours = date.getUTCHours().toString().padStart(2, "0");
@@ -88,8 +97,10 @@ export default function Home({
           </div>
         </div>
         <div className="mx-20 mb-28 mt-10 flex flex-col justify-center text-center text-3xl font-medium uppercase">
-          <h1 className="text- font-neue">Tailored Deals for You</h1>
-          <p className="aling- mb-8 flex max-w-3xl self-center text-center font-montserrat text-base leading-6 text-black">
+          <HeroTag />
+          <div className="h-2" />
+          <h1 className="font-neue">Tailored Deals for You</h1>
+          <p className="mb-8 flex max-w-3xl self-center text-center font-montserrat text-base leading-6 text-black">
             Discover limited-time offers, seasonal specials, and personalized
             discounts that make your travel dreams a reality.
           </p>
@@ -98,7 +109,7 @@ export default function Home({
               {deals?.predicted.deals?.map((item, idx) => {
                 return (
                   <Col span={8} key={idx}>
-                    <BookingCard
+                    <TicketCard
                       originalPrice={Number(item.price ?? 0)}
                       discountedPrice={applyRandomDiscount(
                         Number(item.price ?? 0),
@@ -112,7 +123,7 @@ export default function Home({
                       airlineLogo="/images/airline_logo_1.svg"
                       airplaneCode="WIZ 1337"
                       loyalty={item.loialtyPoints ?? 15}
-                      duration={item.duration ?? ""}
+                      duration={item?.duration ?? ""}
                     />
                   </Col>
                 );
@@ -132,18 +143,43 @@ export default function Home({
               return (
                 <Row key={idx} gutter={16} style={{ marginBottom: "24px" }}>
                   <EventCard
-                    originalPrice={200}
-                    discountedPrice={150}
-                    departureCountry="Prishtina"
-                    departureTime="10:30"
-                    arrivalCountry="Tirana"
-                    arrivalTime="12:30"
+                    name="BeerFest"
+                    location="Sttugart, Germany"
                     date="mon, 13 nov"
-                    countryImage={`/images/image${idx + 1}.png`}
-                    airlineLogo="/images/airline_logo_1.svg"
-                    airplaneCode="WIZ 1337"
-                    loyalty={17}
-                    duration="4"
+                    isOpen={eventsOpened[idx]}
+                    onClick={() => flipEvent(idx, eventsOpened)}
+                    firstTicket={
+                      <EventTicket
+                        originalPrice={200}
+                        discountedPrice={150}
+                        departureCountry="Prishtina"
+                        departureTime="10:30"
+                        arrivalCountry="Tirana"
+                        arrivalTime="12:30"
+                        date="mon, 13 nov"
+                        countryImage={`/images/image${idx + 1}.png`}
+                        airlineLogo="/images/airline_logo_1.svg"
+                        airplaneCode="WIZ 1337"
+                        loyalty={17}
+                        duration={"blah"}
+                      />
+                    }
+                    secondTicket={
+                      <EventTicket
+                        originalPrice={200}
+                        discountedPrice={150}
+                        departureCountry="Prishtina"
+                        departureTime="10:30"
+                        arrivalCountry="Tirana"
+                        arrivalTime="12:30"
+                        date="mon, 13 nov"
+                        countryImage={`/images/image${idx + 1}.png`}
+                        airlineLogo="/images/airline_logo_1.svg"
+                        airplaneCode="WIZ 1337"
+                        loyalty={17}
+                        duration={"blah"}
+                      />
+                    }
                   />
                 </Row>
               );
