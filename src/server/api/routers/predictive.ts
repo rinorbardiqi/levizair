@@ -4,7 +4,11 @@ import language from "@google-cloud/language";
 import { calculateLoyaltyPoints } from "./flights";
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: `${process.cwd()}/levizair.json`,
+  credentials: {
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY,
+  },
 });
 
 const client = new language.LanguageServiceClient({
