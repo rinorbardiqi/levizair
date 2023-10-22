@@ -1,4 +1,8 @@
 import { Carousel } from "antd";
+import Image from "next/image";
+import imageOne from "public/images/authLogo.png";
+import imageTwo from "public/images/authLogo2.png";
+import imageThree from "public/images/authLogo3.png";
 
 interface P {
   fullSize?: boolean;
@@ -7,15 +11,15 @@ interface P {
 const sliderImages = [
   {
     id: 1,
-    src: "https://app.iconosquare.com/_next/image?url=https%3A%2F%2Fcdn-prod.app.iconosquare.com%2F_next%2Fstatic%2Fmedia%2Fscheduling-approval%40x2.934ed8d0.jpg&w=1920&q=75",
+    src: imageOne,
   },
   {
     id: 2,
-    src: "https://app.iconosquare.com/_next/image?url=https%3A%2F%2Fcdn-prod.app.iconosquare.com%2F_next%2Fstatic%2Fmedia%2Ftiktok-analytics%40x2.87fc15b3.jpg&w=1920&q=75",
+    src: imageTwo,
   },
   {
     id: 3,
-    src: "https://app.iconosquare.com/_next/image?url=https%3A%2F%2Fcdn-prod.app.iconosquare.com%2F_next%2Fstatic%2Fmedia%2Flinkedin-analytics%40x2.abadb39a.jpg&w=1920&q=75",
+    src: imageThree,
   },
 ];
 
@@ -29,8 +33,9 @@ export const ImageSlider = ({ fullSize }: P) => {
       <div className="mx-auto flex w-full flex-1 flex-col justify-center">
         <Carousel autoplay autoplaySpeed={5000} easing="ease-in-out">
           {sliderImages.map(({ id, src }) => (
+            // eslint-disable-next-line react/jsx-no-comment-textnodes
             <div key={id} className="h-screen">
-              <img src={src} alt="" className="h-full w-full object-cover" />
+              <Image src={src} alt="" className="h-full w-full object-cover" />
             </div>
           ))}
         </Carousel>
