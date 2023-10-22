@@ -39,7 +39,10 @@ const HeaderLayout = ({
           alt="logo"
           width={140}
           height={41}
-          onClick={() => void router.push("/")}
+          onClick={() => {
+            onMenuChange("1");
+            void router.push("/");
+          }}
         />
         <div className="relative ml-auto flex">
           {menu.map((item) => (

@@ -8,7 +8,7 @@ const SelectOptionsButton = ({ price }: P) => {
     <div>
       <Button
         style={{ fontFamily: "inherit" }}
-        className="bg-mblue h-auto w-full rounded px-6 py-3 text-base font-medium text-white"
+        className="h-auto w-full rounded bg-mblue px-6 py-3 text-base font-medium text-white"
       >
         Select Options - ${price}+
       </Button>

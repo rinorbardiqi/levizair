@@ -2,6 +2,8 @@ import { Col, Divider, Progress, Row, Select, Tag, notification } from "antd";
 import { useSession } from "next-auth/react";
 import HeaderLayout, { type MenuP } from "~/components/layout/Header";
 import { RxCross1 } from "react-icons/rx";
+import { AiOutlineCalendar } from "react-icons/ai";
+import { PiCaretDownBold } from "react-icons/pi";
 import Image from "next/image";
 import { useState } from "react";
 import { api } from "@api";
@@ -276,9 +278,80 @@ export default function Profile({
               })}
             </div>
           </Col>
-          <Col span={11} className="ml-4 bg-white">
-            <div className="border   border-mgray px-10 py-5 pl-5">
-              ticket history
+          <Col span={11} className="ml-4">
+            <div className="flex flex-col justify-center rounded-xl  border border-mgray bg-white px-12 py-8 pb-8">
+              <h1 className="mb-6 font-neue text-3xl font-medium  ">
+                Ticket History
+              </h1>
+              <p>
+                Your travel story unfolds here, ensuring that every flight
+                you&apos;ve taken becomes a part of your personal aviation
+                history
+              </p>
+
+              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
+                <div className="flex flex-col gap-2">
+                  <Image
+                    width={80}
+                    height={80}
+                    alt="logo image"
+                    src="/images/lufthansa-logo.png"
+                  />
+                  <h3 className="text-lg">Prishtina to Tirana</h3>
+                  <div className="flex items-center gap-2 text-lgray">
+                    <AiOutlineCalendar /> <span>WED, 20 OCT - SQ 705</span>
+                  </div>
+                </div>
+                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
+              </div>
+
+              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
+                <div className="flex flex-col gap-2">
+                  <Image
+                    width={80}
+                    height={80}
+                    alt="logo image"
+                    src="/images/lufthansa-logo.png"
+                  />
+                  <h3 className="text-lg">Spain to India</h3>
+                  <div className="flex items-center gap-2 text-lgray">
+                    <AiOutlineCalendar /> <span>WED, 12 SEPT - SQ 305</span>
+                  </div>
+                </div>
+                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
+              </div>
+
+              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
+                <div className="flex flex-col gap-2">
+                  <Image
+                    width={80}
+                    height={80}
+                    alt="logo image"
+                    src="/images/lufthansa-logo.png"
+                  />
+                  <h3 className="text-lg">Australia to France</h3>
+                  <div className="flex items-center gap-2 text-lgray">
+                    <AiOutlineCalendar /> <span>WED, 28 Aug - SQ 025</span>
+                  </div>
+                </div>
+                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
+              </div>
+
+              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
+                <div className="flex flex-col gap-2">
+                  <Image
+                    width={80}
+                    height={80}
+                    alt="logo image"
+                    src="/images/lufthansa-logo.png"
+                  />
+                  <h3 className="text-lg">Canada to Mexico</h3>
+                  <div className="flex items-center gap-2 text-lgray">
+                    <AiOutlineCalendar /> <span>WED, 3 Jan - SQ 346</span>
+                  </div>
+                </div>
+                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
+              </div>
             </div>
           </Col>
           <Col span={1}></Col>
