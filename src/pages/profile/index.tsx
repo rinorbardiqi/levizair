@@ -3,10 +3,11 @@ import { useSession } from "next-auth/react";
 import HeaderLayout, { type MenuP } from "~/components/layout/Header";
 import { RxCross1 } from "react-icons/rx";
 import { AiOutlineCalendar } from "react-icons/ai";
-import { PiCaretDownBold } from "react-icons/pi";
+import { PiCaretDownBold, PiCaretUpBold } from "react-icons/pi";
 import Image from "next/image";
 import { useState } from "react";
 import { api } from "@api";
+import { formatDateAsCustomFormat, formatHourMinute } from "..";
 
 const LEVELS = [
   { id: 1, label: "Event Deals", level: 1 },
@@ -70,6 +71,28 @@ const TAGS = [
   { id: 25, label: "hiking" },
 ];
 
+const parseDateString = (dateString: string): Date => {
+  const parsedDate = new Date(Date.parse(dateString));
+  return parsedDate;
+};
+
+const getDuration = (startDate: Date, endDate: Date): string => {
+  const durationInMilliseconds = endDate.getTime() - startDate.getTime();
+
+  const millisecondsInMinute = 60 * 1000;
+  let minutes = Math.floor(durationInMilliseconds / millisecondsInMinute);
+  const hours = Math.floor(minutes / 60);
+  minutes %= 60;
+
+  if (hours > 0 && minutes > 0) {
+    return `${hours}h ${minutes}min`;
+  } else if (hours > 0) {
+    return `${hours}h ${minutes}min`;
+  } else {
+    return `${minutes}min`;
+  }
+};
+
 export default function Profile({
   menu,
   onMenuChange,
@@ -80,6 +103,7 @@ export default function Profile({
   const { data } = useSession();
 
   const [activeLoyalty, setActiveLoyalty] = useState("");
+  const [activeHistory, setActiveHistory] = useState("");
 
   const { data: loyaltyPoints } = api.loyaltyPoints.loyaltyPoints.useQuery({
     take: 3,
@@ -89,6 +113,8 @@ export default function Profile({
   const { data: tags, refetch: refetchTags } = api.user.fetchTags.useQuery({
     userId: data?.user.id ?? "",
   });
+
+  const { data: bookings } = api.booking.bookings.useQuery();
 
   const updateTags = api.user.updateTags.useMutation({
     onSuccess() {
@@ -212,7 +238,7 @@ export default function Profile({
             </div>
             <div className="mb-8 flex flex-col justify-center rounded-xl border border-mgray bg-white px-12 py-8 pb-8">
               <h1 className="mb-6 font-neue text-3xl font-medium  ">
-                Your Top 3 Loyalty Points
+                Loyalty Points
               </h1>
               <p>
                 Fly, accumulate points, and unlock exclusive rewards! Enjoy
@@ -227,12 +253,15 @@ export default function Profile({
                 return (
                   <div key={item.id} className="my-4 rounded-md bg-mwhite p-5">
                     <div className="flex justify-between">
-                      <Image
-                        width={120}
-                        height={80}
-                        alt="logo image"
-                        src="/images/lufthansa-logo.png"
-                      />
+                      <div className="flex gap-2">
+                        <Image
+                          width={24}
+                          height={60}
+                          alt="logo image"
+                          src="/images/logo-luft.png"
+                        />
+                        <h3 className="text-lg">{item.airline.name}</h3>
+                      </div>
                       <span>
                         {100 - item.value} points to reach{" "}
                         <span className="font-semibold">
@@ -289,69 +318,115 @@ export default function Profile({
                 history
               </p>
 
-              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
-                <div className="flex flex-col gap-2">
-                  <Image
-                    width={80}
-                    height={80}
-                    alt="logo image"
-                    src="/images/lufthansa-logo.png"
-                  />
-                  <h3 className="text-lg">Prishtina to Tirana</h3>
-                  <div className="flex items-center gap-2 text-lgray">
-                    <AiOutlineCalendar /> <span>WED, 20 OCT - SQ 705</span>
-                  </div>
-                </div>
-                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
-              </div>
+              {bookings?.bookings.map((item) => {
+                const ticket = item.tickets[0];
 
-              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
-                <div className="flex flex-col gap-2">
-                  <Image
-                    width={80}
-                    height={80}
-                    alt="logo image"
-                    src="/images/lufthansa-logo.png"
-                  />
-                  <h3 className="text-lg">Spain to India</h3>
-                  <div className="flex items-center gap-2 text-lgray">
-                    <AiOutlineCalendar /> <span>WED, 12 SEPT - SQ 305</span>
-                  </div>
-                </div>
-                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
-              </div>
+                const from =
+                  ticket?.bookedSegments[0]?.flight?.startDestination?.City;
+                const to = ticket?.bookedSegments[0]?.flight?.destination?.City;
 
-              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
-                <div className="flex flex-col gap-2">
-                  <Image
-                    width={80}
-                    height={80}
-                    alt="logo image"
-                    src="/images/lufthansa-logo.png"
-                  />
-                  <h3 className="text-lg">Australia to France</h3>
-                  <div className="flex items-center gap-2 text-lgray">
-                    <AiOutlineCalendar /> <span>WED, 28 Aug - SQ 025</span>
+                return (
+                  <div
+                    key={item.id}
+                    className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4"
+                  >
+                    <div className="flex flex-col gap-1">
+                      <div className="flex flex-row items-center gap-2">
+                        <Image
+                          width={20}
+                          height={80}
+                          alt="logo image"
+                          src="/images/logo-luft.png"
+                        />
+                        <h3 className="">{ticket?.ticketingAirline.name}</h3>
+                      </div>
+                      <h3 className="text-lg">
+                        {from} to {to}
+                      </h3>
+                      <div className="flex items-center gap-2 text-lgray">
+                        <AiOutlineCalendar />{" "}
+                        <span>
+                          {formatDateAsCustomFormat(
+                            ticket?.bookedSegments?.[0]?.departureDate ??
+                              new Date(),
+                          )}{" "}
+                          - WIZ 1337
+                        </span>
+                      </div>
+                      {activeHistory === String(item.id) && (
+                        <div className="flex flex-col gap-3">
+                          <div className="mt-3">
+                            <div className="justify-left text-md flex items-center gap-2 font-semibold">
+                              {formatHourMinute(
+                                ticket?.bookedSegments?.[0]?.departureDate ??
+                                  new Date(),
+                              )}
+                              <Image
+                                width={24}
+                                height={24}
+                                className="inline"
+                                alt="->"
+                                src="/images/arrowright.svg"
+                              />
+                              {formatHourMinute(
+                                ticket?.bookedSegments?.[0]?.arrivalDate ??
+                                  new Date(),
+                              )}
+                            </div>
+                          </div>
+                          <div className="justify-left flex items-center gap-1 text-base">
+                            <Image
+                              width={16}
+                              height={16}
+                              className="inline"
+                              alt="->"
+                              src="/images/clock.svg"
+                            />
+                            Duration{" "}
+                            {getDuration(
+                              parseDateString(
+                                String(
+                                  ticket?.bookedSegments?.[0]?.departureDate,
+                                ),
+                              ),
+                              parseDateString(
+                                String(
+                                  ticket?.bookedSegments?.[0]?.arrivalDate,
+                                ),
+                              ),
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {activeHistory === String(item.id) ? (
+                      <PiCaretUpBold
+                        onClick={() => {
+                          if (activeHistory === String(item.id)) {
+                            setActiveHistory("none");
+                          } else {
+                            setActiveHistory(String(item.id));
+                          }
+                        }}
+                        fontSize={21}
+                        className="cursor-pointer"
+                      />
+                    ) : (
+                      <PiCaretDownBold
+                        onClick={() => {
+                          if (activeHistory === String(item.id)) {
+                            setActiveHistory("none");
+                          } else {
+                            setActiveHistory(String(item.id));
+                          }
+                        }}
+                        fontSize={21}
+                        className="cursor-pointer"
+                      />
+                    )}
                   </div>
-                </div>
-                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
-              </div>
-
-              <div className="mt-6 flex flex-row items-center justify-between  rounded-xl border border-mgray bg-white px-4 py-4">
-                <div className="flex flex-col gap-2">
-                  <Image
-                    width={80}
-                    height={80}
-                    alt="logo image"
-                    src="/images/lufthansa-logo.png"
-                  />
-                  <h3 className="text-lg">Canada to Mexico</h3>
-                  <div className="flex items-center gap-2 text-lgray">
-                    <AiOutlineCalendar /> <span>WED, 3 Jan - SQ 346</span>
-                  </div>
-                </div>
-                <PiCaretDownBold fontSize={21} className="cursor-pointer" />
-              </div>
+                );
+              })}
             </div>
           </Col>
           <Col span={1}></Col>

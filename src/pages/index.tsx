@@ -14,6 +14,36 @@ import EventCard from "~/components/EventCard";
 import { api } from "~/utils/api";
 import HeroTag from "~/components/HeroTag";
 
+export const formatDateAsCustomFormat = (date: Date): string => {
+  const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
+
+  const dayOfWeek = daysOfWeek[date.getUTCDay()];
+  const day = date.getUTCDate();
+  const month = months[date.getUTCMonth()];
+
+  return `${dayOfWeek}, ${day} ${month}`;
+};
+
+export function formatHourMinute(date: Date): string {
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
 export default function Home({
   menu,
   onMenuChange,
@@ -29,11 +59,6 @@ export default function Home({
     setEventsOpened(copy);
   };
   const { data: deals } = api.googleAi.predict.useQuery();
-  function formatHourMinute(date: Date): string {
-    const hours = date.getUTCHours().toString().padStart(2, "0");
-    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-  }
 
   const getRandomPercentage = (min: number, max: number): number => {
     return Math.random() * (max - min) + min;
@@ -44,29 +69,6 @@ export default function Home({
     const discountAmount = (randomPercentage / 100) * price;
     const discountedPrice = price - discountAmount;
     return Math.round(discountedPrice);
-  };
-  const formatDateAsCustomFormat = (date: Date): string => {
-    const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
-    const months = [
-      "JAN",
-      "FEB",
-      "MAR",
-      "APR",
-      "MAY",
-      "JUN",
-      "JUL",
-      "AUG",
-      "SEP",
-      "OCT",
-      "NOV",
-      "DEC",
-    ];
-
-    const dayOfWeek = daysOfWeek[date.getUTCDay()];
-    const day = date.getUTCDate();
-    const month = months[date.getUTCMonth()];
-
-    return `${dayOfWeek}, ${day} ${month}`;
   };
 
   return (
@@ -120,7 +122,7 @@ export default function Home({
                       arrivalTime={formatHourMinute(item.arriveDate!)}
                       date={formatDateAsCustomFormat(item.departureDate!)}
                       countryImage={`/images/image${idx + 1}.png`}
-                      airlineLogo="/images/airline_logo_1.svg"
+                      airlineLogo="/images/logo-luft.png"
                       airplaneCode="WIZ 1337"
                       loyalty={item.loialtyPoints ?? 15}
                       duration={item?.duration ?? ""}
