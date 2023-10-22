@@ -1,32 +1,83 @@
-import Image from "next/image";
 import DateDetails from "../DateDetails";
 import AirlineTitle from "../AirlineTitle";
+import DiscountDeals from "../DiscountDeals";
+import SelectOptionsButton from "../SelectOptionsButton";
+import SavePercentage from "../SavePercentage";
+import imageParis from "public/images/image1.png";
+import Image from "next/image";
+export interface DiscountCardProps {
+  originalPrice: number;
+  discountedPrice: number;
+  departureCountry: string;
+  departureTime: string;
+  arrivalCountry: string;
+  arrivalTime: string;
+  date: string;
+  countryImage: string;
+  airlineLogo: string;
+  airplaneCode: string;
+  loyalty: number;
+}
 
-const BookingCard = () => {
+const BookingCard = ({
+  originalPrice,
+  discountedPrice,
+  departureCountry,
+  departureTime,
+  arrivalCountry,
+  arrivalTime,
+  date,
+  countryImage,
+  airlineLogo,
+  airplaneCode,
+  loyalty,
+}: DiscountCardProps) => {
+  const savePercentage = Math.round(
+    ((originalPrice - discountedPrice) / originalPrice) * 100,
+  );
+  const duration = "1h 50m";
   return (
     <div>
-      <Image
-        width={500}
-        height={150}
-        alt="booking image"
-        src="/images/landing_hero.png"
-      ></Image>
-      <div className="font-neue font-bold"> Booking</div>
-      <div className="m-6">
+      <div className="relative w-full">
+        <Image
+          src={countryImage}
+          width="0"
+          height="0"
+          sizes="100vw"
+          className="h-80  w-full rounded-t-xl"
+          alt="booking image"
+        />
+        <div className="absolute right-5 top-5">
+          <SavePercentage percentage={savePercentage} />
+        </div>
+      </div>
+      <div className="rounded-b-xl border border-mgray bg-mwhite p-6">
         <AirlineTitle
-          logo="/images/airline_logo_1.svg"
-          departure="Prishtina"
-          arrival="Tirana"
+          logo={airlineLogo}
+          departure={departureCountry}
+          arrival={arrivalCountry}
         />
+
         {/* Stroke */}
-        <div className="my-5 h-[1px] w-full bg-[#E0E0E0]"></div>
+        <div className="my-5 h-[1px] w-full bg-mgray" />
+
         <DateDetails
-          departure="12:00"
-          arrival="13:40"
-          date="12.10.2023"
-          airplaneCode="WIZ-1337"
-          duration="1h 5m"
+          departureTime={departureTime}
+          arrivalTime={arrivalTime}
+          date={date.toUpperCase()}
+          airplaneCode={airplaneCode}
+          duration={duration}
         />
+
+        <div className="h-6"></div>
+        <DiscountDeals
+          original={originalPrice}
+          discounted={discountedPrice}
+          loyalty={loyalty}
+        />
+
+        <div className="h-6"></div>
+        <SelectOptionsButton price={originalPrice} />
       </div>
     </div>
   );

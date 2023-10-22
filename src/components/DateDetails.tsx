@@ -1,15 +1,15 @@
 import Image from "next/image";
 
 interface P {
-  departure: string;
-  arrival: string;
+  departureTime: string;
+  arrivalTime: string;
   date: string;
   airplaneCode: string;
   duration: string;
 }
 const DateDetails = ({
-  departure,
-  arrival,
+  departureTime: departure,
+  arrivalTime: arrival,
   date,
   airplaneCode,
   duration,
@@ -17,7 +17,7 @@ const DateDetails = ({
   return (
     <div className="flex flex-col gap-2">
       {/* Time */}
-      <div className="align-center justify-left flex gap-2 text-xl font-semibold">
+      <div className="justify-left flex items-center gap-2 text-xl font-semibold">
         {departure}
         <Image
           width={24}
@@ -29,7 +29,7 @@ const DateDetails = ({
         {arrival}
       </div>
       {/* Date and code */}
-      <div className="align-center justify-left flex gap-1 text-base">
+      <div className="justify-left flex items-center gap-1 text-base">
         <Image
           width={16}
           height={16}
@@ -37,10 +37,10 @@ const DateDetails = ({
           alt="->"
           src="/images/calendar.svg"
         />
-        {`${date} - ${airplaneCode}`}
+        {date} - {airplaneCode}
       </div>
       {/* Duration */}
-      <div className="align-center justify-left flex gap-1 text-base">
+      <div className="justify-left flex items-center gap-1 text-base">
         <Image
           width={16}
           height={16}
@@ -48,7 +48,7 @@ const DateDetails = ({
           alt="->"
           src="/images/clock.svg"
         />
-        {`Duration ${duration}`}
+        Duration {duration}
       </div>
     </div>
   );
