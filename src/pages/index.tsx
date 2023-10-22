@@ -5,13 +5,19 @@ import suggestImg from "public/images/suggestPlace.png";
 import planeImg from "public/images/plane.png";
 import referedGif from "public/images/referedGif.gif";
 import footerImg from "public/images/Footer.png";
-import HeaderLayout from "~/components/layout/Header";
+import HeaderLayout, { type MenuP } from "~/components/layout/Header";
 import { useState } from "react";
 import { Row, Col, Button, Modal } from "antd";
 import BookingCard from "~/components/BookingCard";
 import EventCard from "~/components/EventCard";
 
-export default function Home() {
+export default function Home({
+  menu,
+  onMenuChange,
+}: {
+  menu: MenuP[];
+  onMenuChange: (key: string) => void;
+}) {
   const [openReferedBy, setOpenReferedBy] = useState(false);
   return (
     <>
@@ -21,7 +27,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="h-full bg-mwhite font-montserrat">
-        <HeaderLayout />
+        <HeaderLayout menu={menu} onMenuChange={onMenuChange} />
         <div
           className="relative bg-auto bg-center bg-no-repeat"
           style={{ height: "80vh" }}
@@ -133,7 +139,7 @@ export default function Home() {
               className="h-14 w-full bg-mblue text-white"
               onClick={() => setOpenReferedBy(true)}
             >
-              <span className="!flex !flex-row items-center justify-center">
+              <span className="!flex !flex-row items-center justify-center text-white">
                 <Image
                   src="images/referUser.svg"
                   alt=""
@@ -193,7 +199,7 @@ export default function Home() {
               className="h-14 w-full bg-mblue text-white"
               onClick={() => setOpenReferedBy(false)}
             >
-              <span className="!flex !flex-row items-center justify-center">
+              <span className="!flex !flex-row items-center justify-center text-white">
                 <Image
                   src="images/link.svg"
                   alt=""

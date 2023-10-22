@@ -1,6 +1,6 @@
 import { Col, Divider, Progress, Row, Select, Tag, notification } from "antd";
 import { useSession } from "next-auth/react";
-import HeaderLayout from "~/components/layout/Header";
+import HeaderLayout, { type MenuP } from "~/components/layout/Header";
 import { RxCross1 } from "react-icons/rx";
 import Image from "next/image";
 import { useState } from "react";
@@ -68,7 +68,13 @@ const TAGS = [
   { id: 25, label: "hiking" },
 ];
 
-export default function Profile() {
+export default function Profile({
+  menu,
+  onMenuChange,
+}: {
+  menu: MenuP[];
+  onMenuChange: (key: string) => void;
+}) {
   const { data } = useSession();
 
   const [activeLoyalty, setActiveLoyalty] = useState("");
@@ -123,7 +129,7 @@ export default function Profile() {
 
   return (
     <>
-      <HeaderLayout />
+      <HeaderLayout menu={menu} onMenuChange={onMenuChange} />
       <div className="h-full bg-mwhite">
         <Row className="bg-mwhite pt-8">
           <Col span={1}></Col>
@@ -202,9 +208,9 @@ export default function Profile() {
                 ))}
               </div>
             </div>
-            <div className="flex flex-col justify-center rounded-xl border border-mgray bg-white px-12 py-8 pb-8">
+            <div className="mb-8 flex flex-col justify-center rounded-xl border border-mgray bg-white px-12 py-8 pb-8">
               <h1 className="mb-6 font-neue text-3xl font-medium  ">
-                Loyalty Points
+                Your Top 3 Loyalty Points
               </h1>
               <p>
                 Fly, accumulate points, and unlock exclusive rewards! Enjoy
@@ -226,7 +232,7 @@ export default function Profile() {
                         src="/images/lufthansa-logo.png"
                       />
                       <span>
-                        {item.value}/100 to reach{" "}
+                        {100 - item.value} points to reach{" "}
                         <span className="font-semibold">
                           Tier {item.level + 1}
                         </span>
