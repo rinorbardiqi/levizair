@@ -2,29 +2,22 @@ import { Layout } from "antd";
 import Image from "next/image";
 import { useRouter } from "next/router";
 const { Header } = Layout;
-const menu = [
-  {
-    key: "1",
-    name: "Deals",
-    active: true,
-    path: "/",
-  },
-  {
-    active: false,
-    key: "2",
-    name: "Events",
-    path: "/",
-  },
-  {
-    key: "3",
-    name: "Profile",
-    active: false,
-    icon: "images/user.svg",
-    path: "/profile",
-  },
-];
 
-const HeaderLayout = () => {
+export interface MenuP {
+  key: string;
+  name: string;
+  active: boolean;
+  icon?: string;
+  path: string;
+}
+
+const HeaderLayout = ({
+  menu,
+  onMenuChange,
+}: {
+  menu: MenuP[];
+  onMenuChange: (key: string) => void;
+}) => {
   const router = useRouter();
 
   return (
@@ -40,7 +33,17 @@ const HeaderLayout = () => {
         }}
         className="h-16 bg-white px-16"
       >
-        <Image src="/images/logo.svg" alt="logo" width={140} height={41} />
+        <Image
+          className="cursor-pointer"
+          src="/images/logo.svg"
+          alt="logo"
+          width={140}
+          height={41}
+          onClick={() => {
+            onMenuChange("1");
+            void router.push("/");
+          }}
+        />
         <div className="relative ml-auto flex">
           {menu.map((item) => (
             <span
@@ -48,7 +51,10 @@ const HeaderLayout = () => {
                 item.active ? "text-[#3957CC]" : "text-black"
               }`}
               key={item.key}
-              onClick={() => router.push(item.path)}
+              onClick={() => {
+                onMenuChange(item.key);
+                void router.push(item.path);
+              }}
             >
               {item.icon && (
                 <Image

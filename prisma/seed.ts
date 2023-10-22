@@ -601,7 +601,7 @@ async function main() {
       dateOfBirth: faker.date.birthdate(),
       frequentFlyerNumber: "ABCDEF1234",
       phone: "555-1234",
-      tags: "tag1,tag2",
+      tags: "anime,movies",
     };
     const defaultUser = {
       id: "2d3d",
