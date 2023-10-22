@@ -116,10 +116,10 @@ export default function Home({
           />
           <div className="absolute left-24 top-1/4">
             <div className="mb-6 max-w-[450px] font-neue text-6xl font-medium uppercase leading-[70px] text-white ">
-              A cristal clear airline experience
+              Make experiences save money
             </div>
             <div className="max-w-[320px] font-montserrat text-lg font-normal leading-7 text-white">
-              We believe in invisible details that make the difference.
+              Unlocking rewards, one flight at a time
             </div>
           </div>
         </div>
