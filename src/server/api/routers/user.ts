@@ -37,4 +37,42 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
+  updateTags: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        tags: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (!input.userId || !input.tags) throw new Error("Missing input");
+
+      return ctx.db.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          tags: input.tags,
+        },
+      });
+    }),
+  fetchTags: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      if (!input.userId) throw new Error("Missing input");
+
+      const user = await ctx.db.user.findUnique({
+        where: {
+          id: input.userId,
+        },
+      });
+
+      if (!user) throw new Error("User not found");
+
+      return user.tags.split(",");
+    }),
 });

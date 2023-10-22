@@ -581,13 +581,13 @@ async function main() {
     {
       userId: "2d3d",
       airlineId: 3,
-      value: 130,
+      value: 30,
       level: 1,
     },
     {
       userId: "2d3d",
       airlineId: 5,
-      value: 220,
+      value: 20,
       level: 2,
     },
   ];
