@@ -20,7 +20,7 @@
     "paths": {
       "~/*": ["./src/*"],
       "@wiz": ["./src/libs/wiz/index.ts"],
-      "@api": ["./src/utils/api.ts"],
+      "@api": ["./src/utils/api.ts"]
     },
     "plugins": [{ "name": "next" }]
   },

@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { Events, PrismaClient } from "@prisma/client";
+import { type Events, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -640,6 +640,7 @@ async function main() {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   Array.from({ length: 10 }).map(async (_, id) => {
     const data = {
       id: faker.string.uuid(),

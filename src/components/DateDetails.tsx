@@ -1,6 +1,6 @@
-import Image from "next/image";
 import DateCode from "~/DateCode";
-
+import Clock from "../../public/images/clock.svg";
+import RightArrow from "../../public/images/arrowright.svg";
 interface P {
   departureTime: string;
   arrivalTime: string;
@@ -20,25 +20,13 @@ const DateDetails = ({
       {/* Time */}
       <div className="justify-left flex items-center gap-2 text-xl font-semibold">
         {departure}
-        <Image
-          width={24}
-          height={24}
-          className="inline"
-          alt="->"
-          src="/images/arrowright.svg"
-        />
+        <RightArrow width={24} height={24} className="inline" />
         {arrival}
       </div>
       <DateCode date={date} code={airplaneCode} />
       {/* Duration */}
       <div className="justify-left flex items-center gap-1 text-base">
-        <Image
-          width={16}
-          height={16}
-          className="inline"
-          alt="->"
-          src="/images/clock.svg"
-        />
+        <Clock width={16} height={16} className="inline" alt="->" />
         Duration {duration}
       </div>
     </div>
